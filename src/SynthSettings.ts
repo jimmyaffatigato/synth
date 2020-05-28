@@ -1,5 +1,5 @@
 import Envelope from "./Envelope";
-import { randomInt, randomWave } from "./myLibrary";
+import { randomInt, randomWave } from "./util";
 
 export default class SynthSettings {
     oscType: OscillatorType;

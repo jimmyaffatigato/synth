@@ -1,15 +1,13 @@
 import * as React from "react";
-import { FunctionComponent, PropsWithChildren } from "react";
-import { randomColor } from "../myLibrary";
+import { FunctionComponent, PropsWithChildren, useEffect } from "react";
+import { randomColor } from "../util";
 import EnvelopePanel from "./EnvelopePanel";
 import SynthSettings from "../SynthSettings";
 import Oscilloscope from "./Oscilloscope";
-import Synth from "../synth";
+import Synth from "../synthClass";
 
 interface AppProps {
     synth: Synth;
-    settings: SynthSettings;
-    oscilloscopeDraw: (ctx: CanvasRenderingContext2D, synth: Synth) => void;
 }
 
 const App: FunctionComponent<AppProps> = (props: PropsWithChildren<AppProps>) => {
@@ -25,52 +23,36 @@ const App: FunctionComponent<AppProps> = (props: PropsWithChildren<AppProps>) =>
                 <h1>Wave:</h1>
                 <select
                     onChange={(e) => {
-                        props.settings.oscType = e.target.value as OscillatorType;
+                        props.synth.settings.oscType = e.target.value as OscillatorType;
                     }}
-                    value={props.settings.oscType}
+                    value={props.synth.settings.oscType}
                 >
                     <option value="sine">Sine</option>
                     <option value="sawtooth">Sawtooth</option>
                     <option value="square">Square</option>
                     <option value="triangle">Triangle</option>
                 </select>
-                <EnvelopePanel title="Pitch" envelope={props.settings.pitch}>
-                    <tr>
-                        <td>Type</td>
-                        <td>
-                            <select
-                                style={{ width: "7vw" }}
-                                onChange={(e) => {
-                                    props.settings.pitchAttackType = e.target.value;
-                                }}
-                                value={props.settings.pitchAttackType}
-                            >
-                                <option value="high">High</option>
-                                <option value="low">Low</option>
-                                <option value="port">Portamento</option>
-                            </select>
-                        </td>
-                    </tr>
-                </EnvelopePanel>
+                <EnvelopePanel title="Pitch" envelope={props.synth.settings.pitch}></EnvelopePanel>
 
-                <EnvelopePanel title="Filter" envelope={props.settings.filter}>
+                <EnvelopePanel title="Filter" envelope={props.synth.settings.filter}>
                     <tr>
                         <td>Filter Q</td>
                         <td>
                             <input
                                 style={{ width: "7vw" }}
                                 onChange={(e) => {
-                                    props.settings.fQ = parseInt(e.target.value);
+                                    console.log(e.target.value);
+                                    props.synth.settings.fQ = parseInt(e.target.value);
                                 }}
-                                value={props.settings.fQ}
+                                value={props.synth.settings.fQ}
                             />
                         </td>
                     </tr>
                 </EnvelopePanel>
-                <EnvelopePanel title="Volume" envelope={props.settings.volume} />
+                <EnvelopePanel title="Volume" envelope={props.synth.settings.volume} />
             </div>
 
-            <Oscilloscope draw={props.oscilloscopeDraw} synth={props.synth} />
+            <Oscilloscope synth={props.synth} />
 
             <div
                 className="column"
@@ -82,13 +64,13 @@ const App: FunctionComponent<AppProps> = (props: PropsWithChildren<AppProps>) =>
                 <input
                     type="checkbox"
                     onChange={(e) => {
-                        props.settings.lfoOnOff = e.target.checked;
+                        props.synth.settings.lfoOnOff = e.target.checked;
                     }}
                 />
                 <h1>LFO Mode:</h1>
                 <select
                     onChange={(e) => {
-                        props.settings.lfoMode = e.target.value;
+                        props.synth.settings.lfoMode = e.target.value;
                     }}
                 >
                     <option value="vol">Volume</option>
@@ -99,7 +81,7 @@ const App: FunctionComponent<AppProps> = (props: PropsWithChildren<AppProps>) =>
                 <h1>LFO Type:</h1>
                 <select
                     onChange={(e) => {
-                        props.settings.lfoType = e.target.value as OscillatorType;
+                        props.synth.settings.lfoType = e.target.value as OscillatorType;
                     }}
                 >
                     <option value="sine">Sine</option>
@@ -110,13 +92,13 @@ const App: FunctionComponent<AppProps> = (props: PropsWithChildren<AppProps>) =>
                 <h1>LFO Speed:</h1>
                 <input
                     onChange={(e) => {
-                        props.settings.lfoSpeed = Number(e.target.value);
+                        props.synth.settings.lfoSpeed = Number(e.target.value);
                     }}
                 />
                 <h1>LFO Depth:</h1>
                 <input
                     onChange={(e) => {
-                        props.settings.lfoDepth = Number(e.target.value);
+                        props.synth.settings.lfoDepth = Number(e.target.value);
                     }}
                 />
                 <h1>Pitch Wheel:</h1>
@@ -130,7 +112,7 @@ const App: FunctionComponent<AppProps> = (props: PropsWithChildren<AppProps>) =>
                 <h1>Mod Wheel:</h1>
                 <select
                     onChange={(e) => {
-                        props.settings.modWheel = e.target.value;
+                        props.synth.settings.modWheel = e.target.value;
                     }}
                 >
                     <option value="speed">LFO Speed</option>

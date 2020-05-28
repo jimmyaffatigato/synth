@@ -10,17 +10,10 @@ export function midiToFreq(midiNote: number, temp?: number): number {
 export function randomColor(): string {
     return "#" + Math.random().toString(16).slice(-6);
 }
-export function randomInt(min: number, max: number, size?): number {
-    switch (size) {
-        case "little":
-            return Math.floor(Math.pow(randomInt(min, max) / 10, 2));
-        case "big":
-            return Math.floor(Math.sqrt(randomInt(min, max)) * 10);
-        case undefined:
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+export function randomInt(min: number, max: number): number {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 export function randomWave(): OscillatorType {
     switch (randomInt(0, 3)) {

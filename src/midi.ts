@@ -1,4 +1,4 @@
-import Synth from "./synth";
+import Synth from "./synthClass";
 import SynthSettings from "./SynthSettings";
 
 /*
