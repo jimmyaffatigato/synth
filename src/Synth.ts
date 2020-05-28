@@ -9,7 +9,6 @@ export default class Synth {
     public notesOn: Voice[];
     public octave: number;
     private noteFlags: boolean[];
-    public bend: number;
     public speedMult: number;
     public depthMult: number;
     constructor(au: AudioContext, settings: SynthSettings) {
@@ -26,7 +25,6 @@ export default class Synth {
         for (let k = 0; k < 127; k++) {
             this.noteFlags.push(true);
         }
-        this.bend = 0;
         this.speedMult = 1;
         this.depthMult = 1;
     }

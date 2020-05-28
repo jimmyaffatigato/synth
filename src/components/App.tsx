@@ -2,11 +2,10 @@ import * as React from "react";
 import { FunctionComponent, PropsWithChildren, useEffect } from "react";
 import { randomColor } from "../util";
 import EnvelopePanel from "./EnvelopePanel";
-import SynthSettings from "../SynthSettings";
 import Oscilloscope from "./Oscilloscope";
-import Synth from "../Synth";
+import Synth from "../synth";
 
-interface AppProps {
+export interface AppProps {
     synth: Synth;
 }
 

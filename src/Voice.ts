@@ -76,8 +76,7 @@ export default class Voice {
         }
     }
     public go() {
-        const bent = this.freq * (this.synth.bend + 1);
-        this.osc.frequency.setTargetAtTime(bent, this.synth.au.currentTime, this.synth.settings.pitch.a[1]);
+        this.osc.frequency.setTargetAtTime(this.freq, this.synth.au.currentTime, this.synth.settings.pitch.a[1]);
         this.filEnv.frequency.setTargetAtTime(0, this.synth.au.currentTime, 0);
         this.filEnv.frequency.setTargetAtTime(
             this.synth.settings.filter.a[0],

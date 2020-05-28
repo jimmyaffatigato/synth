@@ -17,5 +17,10 @@
     "webpack-cli": "^3.3.11"
   },
   "author": "Jimmy Affatigato",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@types/react-redux": "^7.1.9",
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5"
+  }
 }

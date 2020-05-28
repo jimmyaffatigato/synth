@@ -1,1 +1,3 @@
-{ "compilerOptions": { "target": "ES6", "lib": ["ES6"], "jsx": "react", "sourceMap": true } }
+{
+  "compilerOptions": { "target": "ES6", "lib": ["ES6"], "jsx": "react", "sourceMap": true, "moduleResolution": "node" }
+}
