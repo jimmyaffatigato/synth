@@ -4,7 +4,7 @@ import { randomColor } from "../util";
 import EnvelopePanel from "./EnvelopePanel";
 import SynthSettings from "../SynthSettings";
 import Oscilloscope from "./Oscilloscope";
-import Synth from "../synthClass";
+import Synth from "../Synth";
 
 interface AppProps {
     synth: Synth;

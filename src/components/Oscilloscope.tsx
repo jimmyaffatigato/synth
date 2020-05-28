@@ -1,6 +1,6 @@
 import * as React from "react";
 import { FunctionComponent, PropsWithChildren, useRef, useEffect, useState } from "react";
-import Synth from "../synthClass";
+import Synth from "../Synth";
 
 interface OscilloscopeProps {
     synth: Synth;

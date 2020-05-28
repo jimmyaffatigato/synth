@@ -1,4 +1,4 @@
-import Synth from "./synthClass";
+import Synth from "./Synth";
 import { midiToFreq } from "./util";
 
 export default class Voice {

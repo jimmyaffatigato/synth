@@ -1,6 +1,6 @@
 /// <reference lib="dom" />
 
-import Synth from "./synthClass";
+import Synth from "./Synth";
 import { randomColor } from "./util";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
