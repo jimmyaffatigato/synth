@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-    entry: "./src/html.ts",
+    entry: "./src/main.tsx",
     mode: "development",
     output: {
         filename: "main.js",

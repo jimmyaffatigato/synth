@@ -1,8 +1,9 @@
-import { devices } from "./html";
-import { Voice, pre, syn, synth } from "./synth";
+import Synth from "./synth";
+import SynthSettings from "./SynthSettings";
 
-export const notesOn = [];
-function openMIDI() {
+/*
+
+export default function openMIDI() {
     if (navigator.requestMIDIAccess) {
         navigator
             .requestMIDIAccess({
@@ -23,15 +24,15 @@ function onMIDIMessage(event: WebMidi.MIDIMessageEvent): void {
             //Note On
             if (data[2] > 0) {
                 var newVoice = new Voice(data[1], data[2]);
-                notesOn.push(newVoice);
+                synth.notesOn.push(newVoice);
                 newVoice.go();
             }
             //Note Off
             else {
-                for (let notes = 0; notes < notesOn.length; notes++) {
-                    if (notesOn[notes].note == data[1]) {
-                        notesOn[notes].bye();
-                        notesOn[notes].osc.onended = notesOn.splice(notes, 1);
+                for (let notes = 0; notes < synth.notesOn.length; notes++) {
+                    if (synth.notesOn[notes].note == data[1]) {
+                        synth.notesOn[notes].bye();
+                        synth.notesOn[notes].osc.onended = synth.notesOn.splice(notes, 1);
                     }
                 }
                 break;
@@ -39,12 +40,12 @@ function onMIDIMessage(event: WebMidi.MIDIMessageEvent): void {
         case 176:
             //Mod Wheel
             if (data[1] == 1) {
-                switch (pre.modWheel) {
+                switch (settings.modWheel) {
                     case "pitch":
                         syn.bend = data[2] / 127;
-                        for (let notes = 0; notes < notesOn.length; notes++) {
-                            notesOn[notes].osc.frequency.setTargetAtTime(
-                                notesOn[notes].freq * (syn.bend + 1),
+                        for (let notes = 0; notes < synth.notesOn.length; notes++) {
+                            synth.notesOn[notes].osc.frequency.setTargetAtTime(
+                                synth.notesOn[notes].freq * (syn.bend + 1),
                                 synth.au.currentTime,
                                 0
                             );
@@ -52,9 +53,9 @@ function onMIDIMessage(event: WebMidi.MIDIMessageEvent): void {
                         break;
                     case "speed":
                         syn.speedMult = data[2] / 64;
-                        for (let notes = 0; notes < notesOn.length; notes++) {
-                            notesOn[notes].lfo.frequency.setTargetAtTime(
-                                pre.lfoSpeed * syn.speedMult,
+                        for (let notes = 0; notes < synth.notesOn.length; notes++) {
+                            synth.notesOn[notes].lfo.frequency.setTargetAtTime(
+                                settings.lfoSpeed * syn.speedMult,
                                 synth.au.currentTime,
                                 0
                             );
@@ -63,9 +64,9 @@ function onMIDIMessage(event: WebMidi.MIDIMessageEvent): void {
                         break;
                     case "depth":
                         syn.depthMult = data[2] / 64;
-                        for (let notes = 0; notes < notesOn.length; notes++) {
-                            notesOn[notes].lfoGain.gain.setTargetAtTime(
-                                pre.lfoDepth * syn.depthMult,
+                        for (let notes = 0; notes < synth.notesOn.length; notes++) {
+                            synth.notesOn[notes].lfoGain.gain.setTargetAtTime(
+                                settings.lfoDepth * syn.depthMult,
                                 synth.au.currentTime,
                                 0
                             );
@@ -86,3 +87,4 @@ function onMIDIMessage(event: WebMidi.MIDIMessageEvent): void {
 }
 
 openMIDI();
+*/
