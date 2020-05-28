@@ -3,27 +3,6 @@ import { randomWave, randomInt } from "./myLibrary";
 //Array of preset objects
 export const presets = [
     {
-        oscType: "square" as OscillatorType,
-        p: { a: [0, 0.05] },
-        f: {
-            a: [8000, 0.5],
-            d: [4000, 0.5],
-            s: [2500, 1],
-            r: [0, 0.5],
-        },
-        v: {
-            a: [1, 0.25],
-            d: [0.75, 0.5],
-            s: [0.7, 1],
-            r: [0, 0.5],
-        },
-        fQ: 20,
-        lfoOnOff: true,
-        lfoSpeed: 0.5,
-        lfoDepth: 1,
-        lfoType: "square" as OscillatorType,
-    },
-    {
         oscType: randomWave(),
         port: randomInt(0, 1),
         pitchAttackType: "high",
@@ -75,4 +54,4 @@ export const presets = [
         },
     },
 ];
-presets[1].randomize();
+presets[0].randomize();

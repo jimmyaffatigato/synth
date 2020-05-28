@@ -1,8 +1,9 @@
 /// <reference lib="dom" />
 
 import { randomColor } from "./myLibrary";
-import { pre, scope, Voice, au } from "./synth";
+import { pre, Voice, synth } from "./synth";
 import { notesOn } from "./midi";
+import Keybind from "./Keybind";
 
 //HTML Stuff
 
@@ -38,7 +39,6 @@ export const devices = document.getElementById("devices") as HTMLInputElement;
 export const settings = document.getElementById("settings") as HTMLInputElement;
 export const oscType = document.getElementById("oscType") as HTMLSelectElement;
 export const pitchAttackType = document.getElementById("pitchAttackType") as HTMLSelectElement;
-export const noise = document.getElementById("settings") as HTMLInputElement & { checked: boolean };
 
 //Update HTML
 export function show() {
@@ -107,29 +107,27 @@ rightBox.style.height = `${window.innerHeight - (window.innerWidth / 100) * 2}`;
 rightBox.style.backgroundColor = leftBox.style.backgroundColor;
 scopeBox.width = window.innerWidth / 2;
 scopeBox.height = window.innerHeight;
-var scopeContext = scopeBox.getContext("2d");
-scope.fftSize = 2048;
-var bufferLength = 1024;
-var dataArray = new Uint8Array(bufferLength);
-scope.getByteTimeDomainData(dataArray);
+const scopeContext = scopeBox.getContext("2d");
+synth.scope.fftSize = 2048;
+const bufferLength = 1024;
+const dataArray = new Uint8Array(bufferLength);
+synth.scope.getByteTimeDomainData(dataArray);
 function draw() {
-    scope.getByteTimeDomainData(dataArray);
+    synth.scope.getByteTimeDomainData(dataArray);
     scopeContext.fillStyle = document.body.style.backgroundColor;
     scopeContext.fillRect(0, 0, scopeBox.width, scopeBox.height);
     scopeContext.lineWidth = 10;
     scopeContext.strokeStyle = leftBox.style.backgroundColor;
     scopeContext.beginPath();
-    var sliceWidth = (scopeBox.width * 1.0) / bufferLength;
-    var x = 0;
-    for (var i = 0; i < bufferLength; i++) {
-        var v = dataArray[i] / 128.0;
-        var y = (v * scopeBox.height) / 2;
+    const sliceWidth = (scopeBox.width * 1.0) / bufferLength;
+    for (let i = 0, x = 0; i < bufferLength; i++, x += sliceWidth) {
+        const v = dataArray[i] / 128.0;
+        const y = (v * scopeBox.height) / 2;
         if (i === 0) {
             scopeContext.moveTo(x, y);
         } else {
             scopeContext.lineTo(x, y);
         }
-        x += sliceWidth;
     }
     scopeContext.lineTo(scopeBox.width, scopeBox.height / 2);
     scopeContext.stroke();
@@ -139,16 +137,16 @@ const noteFlags = [];
 for (let k = 0; k < 127; k++) {
     noteFlags.push(true);
 }
-function voiceOn(note, velocity) {
+function voiceOn(note: number, velocity: number) {
     note += 12 * octave;
     if (noteFlags[note] == true) {
-        var newVoice = new Voice(note, velocity);
+        const newVoice = new Voice(note, velocity);
         notesOn.push(newVoice);
         newVoice.go();
         noteFlags[note] = false;
     }
 }
-function voiceOff(note) {
+function voiceOff(note: number) {
     note += 12 * octave;
     noteFlags[note] = true;
     for (let notes = 0; notes < notesOn.length; notes++) {
@@ -158,228 +156,120 @@ function voiceOff(note) {
         }
     }
 }
-var octave = 1;
-window.onkeydown = function (event: KeyboardEvent) {
-    switch (event.key) {
-        case "a":
-            voiceOn(48, 32);
-            break;
-        case "w":
-            voiceOn(49, 32);
-            break;
-        case "s":
-            voiceOn(50, 32);
-            break;
-        case "e":
-            voiceOn(51, 32);
-            break;
-        case "d":
-            voiceOn(52, 32);
-            break;
-        case "f":
-            voiceOn(53, 32);
-            break;
-        case "t":
-            voiceOn(54, 32);
-            break;
-        case "g":
-            voiceOn(55, 32);
-            break;
-        case "y":
-            voiceOn(56, 32);
-            break;
-        case "h":
-            voiceOn(57, 32);
-            break;
-        case "u":
-            voiceOn(58, 32);
-            break;
-        case "j":
-            voiceOn(59, 32);
-            break;
-        case "k":
-            voiceOn(60, 32);
-            break;
-        case "o":
-            voiceOn(60, 127);
-            break;
-        case "l":
-            voiceOn(60, 127);
-            break;
-        case "p":
-            voiceOn(60, 127);
-            break;
-        case ";":
-            voiceOn(60, 127);
-            break;
-        case "'":
-            voiceOn(60, 127);
-            break;
-        case "A":
-            voiceOn(48, 127);
-            break;
-        case "W":
-            voiceOn(49, 127);
-            break;
-        case "S":
-            voiceOn(50, 127);
-            break;
-        case "E":
-            voiceOn(51, 127);
-            break;
-        case "D":
-            voiceOn(52, 127);
-            break;
-        case "F":
-            voiceOn(53, 127);
-            break;
-        case "T":
-            voiceOn(54, 127);
-            break;
-        case "G":
-            voiceOn(55, 127);
-            break;
-        case "Y":
-            voiceOn(56, 127);
-            break;
-        case "H":
-            voiceOn(57, 127);
-            break;
-        case "U":
-            voiceOn(58, 127);
-            break;
-        case "J":
-            voiceOn(59, 127);
-            break;
-        case "K":
-            voiceOn(60, 127);
-            break;
-        case "O":
-            voiceOn(60, 127);
-            break;
-        case "L":
-            voiceOn(60, 127);
-            break;
-        case "P":
-            voiceOn(60, 127);
-            break;
-        case ":":
-            voiceOn(60, 127);
-            break;
-        case '"':
-            voiceOn(60, 127);
-            break;
-        case "q":
-            if (settings.style.visibility == "visible") {
-                settings.style.visibility = "hidden";
-            } else {
-                settings.style.visibility = "visible";
-            }
-            break;
-        case " ":
-            location.reload();
-            break;
-        case "=":
-        case "+":
-            octave++;
-            for (let notes = 0; notes < notesOn.length; notes++) {
-                notesOn[notes].bye();
-                notesOn.splice(notes, 1);
-            }
-            break;
-        case "_":
-        case "-":
-            octave--;
-            for (let notes = 0; notes < notesOn.length; notes++) {
-                notesOn[notes].bye();
-                notesOn.splice(notes, 1);
-            }
-            break;
-        case "x":
-        case "X":
-            for (let notes = 0; notes < notesOn.length; notes++) {
-                notesOn[notes].bye();
-                notesOn.splice(notes, 1);
-            }
-    }
+let octave = 1;
+window.onkeydown = (event: KeyboardEvent) => {
+    keybinds.forEach((keybind) => {
+        if (event.code == keybind.key) {
+            keybind.onDown();
+        }
+    });
 };
 
-window.onkeyup = function (event: KeyboardEvent) {
-    switch (event.key) {
-        case "a":
-        case "A":
-            voiceOff(48);
-            break;
-        case "w":
-        case "W":
-            voiceOff(49);
-            break;
-        case "s":
-        case "S":
-            voiceOff(50);
-            break;
-        case "e":
-        case "E":
-            voiceOff(51);
-            break;
-        case "d":
-        case "D":
-            voiceOff(52);
-            break;
-        case "f":
-        case "F":
-            voiceOff(53);
-            break;
-        case "t":
-        case "T":
-            voiceOff(54);
-            break;
-        case "g":
-        case "G":
-            voiceOff(55);
-            break;
-        case "y":
-        case "Y":
-            voiceOff(56);
-            break;
-        case "h":
-        case "H":
-            voiceOff(57);
-            break;
-        case "u":
-        case "U":
-            voiceOff(58);
-            break;
-        case "j":
-        case "J":
-            voiceOff(59);
-            break;
-        case "k":
-        case "K":
-            voiceOff(60);
-            break;
-        case "o":
-        case "O":
-            voiceOff(61);
-            break;
-        case "l":
-        case "L":
-            voiceOff(62);
-            break;
-        case "p":
-        case "P":
-            voiceOff(63);
-            break;
-        case ";":
-        case ":":
-            voiceOff(64);
-            break;
-        case "'":
-        case '"':
-            voiceOff(65);
-            break;
-    }
+window.onkeyup = (event: KeyboardEvent) => {
+    keybinds.forEach((keybind) => {
+        if (event.code == keybind.key) {
+            if (keybind.onUp) keybind.onUp();
+        }
+    });
 };
+
+const keybinds = [
+    new Keybind(
+        "KeyA",
+        () => voiceOn(48, 127),
+        () => voiceOff(48)
+    ),
+    new Keybind(
+        "KeyW",
+        () => voiceOn(49, 127),
+        () => voiceOff(49)
+    ),
+    new Keybind(
+        "KeyS",
+        () => voiceOn(50, 127),
+        () => voiceOff(50)
+    ),
+    new Keybind(
+        "KeyE",
+        () => voiceOn(51, 127),
+        () => voiceOff(51)
+    ),
+    new Keybind(
+        "KeyD",
+        () => voiceOn(52, 127),
+        () => voiceOff(52)
+    ),
+    new Keybind(
+        "KeyF",
+        () => voiceOn(53, 127),
+        () => voiceOff(53)
+    ),
+    new Keybind(
+        "KeyT",
+        () => voiceOn(54, 127),
+        () => voiceOff(54)
+    ),
+    new Keybind(
+        "KeyG",
+        () => voiceOn(55, 127),
+        () => voiceOff(55)
+    ),
+    new Keybind(
+        "KeyY",
+        () => voiceOn(56, 127),
+        () => voiceOff(56)
+    ),
+    new Keybind(
+        "KeyH",
+        () => voiceOn(57, 127),
+        () => voiceOff(57)
+    ),
+    new Keybind(
+        "KeyU",
+        () => voiceOn(58, 127),
+        () => voiceOff(58)
+    ),
+    new Keybind(
+        "KeyJ",
+        () => voiceOn(59, 127),
+        () => voiceOff(59)
+    ),
+    new Keybind(
+        "KeyK",
+        () => voiceOn(60, 127),
+        () => voiceOff(60)
+    ),
+    new Keybind("KeyQ", () => {
+        if (settings.style.visibility == "visible") {
+            settings.style.visibility = "hidden";
+        } else {
+            settings.style.visibility = "visible";
+        }
+    }),
+    new Keybind("Space", () => {
+        location.reload();
+    }),
+    new Keybind("Equal", () => {
+        octave++;
+        for (let notes = 0; notes < notesOn.length; notes++) {
+            notesOn[notes].bye();
+            notesOn.splice(notes, 1);
+        }
+    }),
+    new Keybind("Minus", () => {
+        octave--;
+        for (let notes = 0; notes < notesOn.length; notes++) {
+            notesOn[notes].bye();
+            notesOn.splice(notes, 1);
+        }
+    }),
+    new Keybind("KeyX", () => {
+        for (let notes = 0; notes < notesOn.length; notes++) {
+            notesOn[notes].bye();
+            notesOn.splice(notes, 1);
+        }
+    }),
+];
 
 main();
 function main() {

@@ -4,6 +4,8 @@
   "description": "",
   "main": "synth.js",
   "dependencies": {
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
     "@types/webmidi": "^2.0.4",
     "css-loader": "^3.5.3",
     "react": "^16.13.1",
