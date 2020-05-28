@@ -70,7 +70,7 @@ export function show() {
     settings.value = JSON.stringify(pre);
 }
 function changeValues() {
-    pre.oscType = oscType.value;
+    pre.oscType = oscType.value as OscillatorType;
     pre.pitchAttackType = pitchAttackType.value;
     pre.p.a[1] = parseFloat(pAT.value);
     pre.f.a[1] = parseFloat(fAT.value);
@@ -92,7 +92,7 @@ function changeValues() {
     pre.v.r[0] = parseFloat(vRV.value);
     pre.lfoOnOff = lfoOnOff.checked;
     pre.lfoMode = lfoMode.value;
-    pre.lfoType = lfoType.value;
+    pre.lfoType = lfoType.value as OscillatorType;
     pre.lfoSpeed = parseFloat(lfoSpeed.value);
     pre.lfoDepth = parseFloat(lfoDepth.value);
     pre.modWheel = modWheel.value;

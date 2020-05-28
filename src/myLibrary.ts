@@ -22,7 +22,7 @@ export function randomInt(min: number, max: number, size?): number {
             return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 }
-export function randomWave(): string {
+export function randomWave(): OscillatorType {
     switch (randomInt(0, 3)) {
         case 0:
             return "sine";

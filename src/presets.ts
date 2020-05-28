@@ -3,7 +3,7 @@ import { randomWave, randomInt } from "./myLibrary";
 //Array of preset objects
 export const presets = [
     {
-        oscType: "square",
+        oscType: "square" as OscillatorType,
         p: { a: [0, 0.05] },
         f: {
             a: [8000, 0.5],
@@ -21,7 +21,7 @@ export const presets = [
         lfoOnOff: true,
         lfoSpeed: 0.5,
         lfoDepth: 1,
-        lfoType: "square",
+        lfoType: "square" as OscillatorType,
     },
     {
         oscType: randomWave(),

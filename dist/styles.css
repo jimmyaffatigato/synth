@@ -1,0 +1,46 @@
+@font-face {
+    font-family: futura;
+    src: url(font.otf);
+    font-weight: 60;
+}
+* {
+    font-family: futura;
+    padding: 0;
+    margin: 0;
+}
+body {
+    overflow: hidden;
+}
+h1 {
+    font-size: 16pt;
+    display: inline-block;
+}
+input {
+    font-size: 16pt;
+}
+input[type="checkbox"] {
+    transform: scale(1.5);
+}
+select {
+    font-size: 16pt;
+}
+#leftBox {
+    display: inline-block;
+    position: absolute;
+    width: 23vw;
+    background-color: blue;
+    padding: 1vw;
+}
+#scopeBox {
+    display: inline-block;
+    position: absolute;
+    left: 25vw;
+}
+#rightBox {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    width: 24vw;
+    background-color: cyan;
+    padding: 1vw;
+}
