@@ -1,0 +1,24 @@
+{
+  "name": "synth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "synth.js",
+  "dependencies": {
+    "@types/webmidi": "^2.0.4",
+    "css-loader": "^3.5.3",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "style-loader": "^1.2.1",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
