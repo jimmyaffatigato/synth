@@ -1,0 +1,7 @@
+.envelopePanel {
+    margin: 0.5vw;
+    padding: 1vw;
+    border-style: inset;
+    border-color: white;
+    box-shadow: inset 0 0 2px #000000;
+}

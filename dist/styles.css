@@ -24,23 +24,23 @@ input[type="checkbox"] {
 select {
     font-size: 16pt;
 }
-#leftBox {
-    display: inline-block;
-    position: absolute;
-    width: 23vw;
-    background-color: blue;
-    padding: 1vw;
+.synth {
+    display: flex;
+    flex-direction: row;
 }
-#scopeBox {
-    display: inline-block;
-    position: absolute;
-    left: 25vw;
+.column {
+    display: flex;
+    padding: 0.5vw;
+    flex-direction: column;
+    border-style: outset;
+    border-color: white;
+    width: 25vw;
+    height: 100vh;
+    resize: horizontal;
+    align-items: center;
 }
-#rightBox {
-    display: inline-block;
-    position: absolute;
-    right: 0;
-    width: 24vw;
-    background-color: cyan;
-    padding: 1vw;
+.oscilloscope {
+    display: block;
+    width: 50vw;
+    height: 100vh;
 }

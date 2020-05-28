@@ -10,27 +10,6 @@ import SynthSettings from "./SynthSettings";
 
 export const synth = new Synth(new AudioContext(), SynthSettings.random());
 
-function draw() {
-    synth.scope.getByteTimeDomainData(dataArray);
-    scopeContext.fillStyle = document.body.style.backgroundColor;
-    scopeContext.fillRect(0, 0, scopeBox.width, scopeBox.height);
-    scopeContext.lineWidth = 10;
-    scopeContext.strokeStyle = "white";
-    scopeContext.beginPath();
-    const sliceWidth = (scopeBox.width * 1.0) / bufferLength;
-    for (let i = 0, x = 0; i < bufferLength; i++, x += sliceWidth) {
-        const v = dataArray[i] / 128.0;
-        const y = (v * scopeBox.height) / 2;
-        if (i === 0) {
-            scopeContext.moveTo(x, y);
-        } else {
-            scopeContext.lineTo(x, y);
-        }
-    }
-    scopeContext.lineTo(scopeBox.width, scopeBox.height / 2);
-    scopeContext.stroke();
-}
-
 window.onkeydown = (event: KeyboardEvent) => {
     keybinds.forEach((keybind) => {
         if (event.code == keybind.key) {
@@ -138,20 +117,32 @@ const keybinds = [
     }),
 ];
 
+document.body.style.backgroundColor = randomColor();
+
 const container = document.createElement("div");
 document.body.appendChild(container);
-ReactDOM.render(<App settings={synth.settings} />, container);
+ReactDOM.render(<App settings={synth.settings} oscilloscopeDraw={draw} synth={synth} />, container);
 
-const scopeBox = document.getElementById("scopeBox") as HTMLCanvasElement;
-document.body.style.backgroundColor = randomColor();
-const scopeContext = scopeBox.getContext("2d");
-synth.scope.fftSize = 2048;
-const bufferLength = 1024;
-const dataArray = new Uint8Array(bufferLength);
-synth.scope.getByteTimeDomainData(dataArray);
-
-main();
-function main() {
-    setTimeout(main, 100);
-    draw();
+function draw(ctx: CanvasRenderingContext2D, synth: Synth) {
+    synth.scope.fftSize = 2048;
+    const bufferLength = 1024;
+    const dataArray = new Uint8Array(bufferLength);
+    synth.scope.getByteTimeDomainData(dataArray);
+    synth.scope.getByteTimeDomainData(dataArray);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = "white";
+    ctx.beginPath();
+    const sliceWidth = (ctx.canvas.width * 1.0) / bufferLength;
+    for (let i = 0, x = 0; i < bufferLength; i++, x += sliceWidth) {
+        const v = dataArray[i] / 128.0;
+        const y = (v * ctx.canvas.height) / 2;
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.lineTo(ctx.canvas.width, ctx.canvas.height / 2);
+    ctx.stroke();
 }

@@ -11,14 +11,14 @@ module.exports = {
         minimize: true,
     },
     resolve: {
-        extensions: [".ts", ".tsx", ".js"],
+        extensions: [".ts", ".tsx", ".js", ".css"],
     },
     module: {
         rules: [
             { test: /\.tsx?$/, loader: "ts-loader" },
             {
                 test: /\.css$/i,
-                use: ["style-loader", "css-loader"],
+                use: ["style-loader", "css-loader?modules=true"],
             },
         ],
     },

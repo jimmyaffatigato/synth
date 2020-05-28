@@ -2,6 +2,7 @@ import * as React from "react";
 import { FunctionComponent, PropsWithChildren } from "react";
 import ParamView from "./ParamView";
 import Envelope from "../Envelope";
+import styles from "./EnvelopePanel.css";
 
 interface EnvelopePanelProps {
     title: string;
@@ -10,7 +11,7 @@ interface EnvelopePanelProps {
 
 const EnvelopePanel: FunctionComponent<EnvelopePanelProps> = (props: PropsWithChildren<EnvelopePanelProps>) => {
     return (
-        <div style={{ borderStyle: "solid", borderColor: "white", padding: "1vw" }}>
+        <div className={styles.envelopePanel}>
             <table>
                 <thead>
                     <tr>
@@ -24,9 +25,9 @@ const EnvelopePanel: FunctionComponent<EnvelopePanelProps> = (props: PropsWithCh
                     <ParamView title="Delay" values={props.envelope.d} />
                     <ParamView title="Sustain" values={props.envelope.s} />
                     <ParamView title="Release" values={props.envelope.r} />
+                    {props.children}
                 </tbody>
             </table>
-            {props.children}
         </div>
     );
 };

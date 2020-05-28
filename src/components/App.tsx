@@ -3,20 +3,23 @@ import { FunctionComponent, PropsWithChildren } from "react";
 import { randomColor } from "../myLibrary";
 import EnvelopePanel from "./EnvelopePanel";
 import SynthSettings from "../SynthSettings";
+import Oscilloscope from "./Oscilloscope";
+import Synth from "../synth";
 
 interface AppProps {
+    synth: Synth;
     settings: SynthSettings;
+    oscilloscopeDraw: (ctx: CanvasRenderingContext2D, synth: Synth) => void;
 }
 
 const App: FunctionComponent<AppProps> = (props: PropsWithChildren<AppProps>) => {
     const backgroundColor = randomColor();
     return (
-        <div>
+        <div className="synth">
             <div
-                id="leftBox"
+                className="column"
                 style={{
                     backgroundColor: backgroundColor,
-                    height: `${window.innerHeight - (window.innerWidth / 100) * 2}`,
                 }}
             >
                 <h1>Wave:</h1>
@@ -31,42 +34,48 @@ const App: FunctionComponent<AppProps> = (props: PropsWithChildren<AppProps>) =>
                     <option value="square">Square</option>
                     <option value="triangle">Triangle</option>
                 </select>
-                <h1>Pitch Attack:</h1>
-                <input
-                    onChange={(e) => {
-                        props.settings.pitch.a[1] = Number(e.target.value);
-                    }}
-                    value={props.settings.pitch.a[1]}
-                />
-                <select
-                    onChange={(e) => {
-                        props.settings.pitchAttackType = e.target.value;
-                    }}
-                >
-                    <option value="high">High</option>
-                    <option value="low">Low</option>
-                    <option value="port">Portamento</option>
-                </select>
+                <EnvelopePanel title="Pitch" envelope={props.settings.pitch}>
+                    <tr>
+                        <td>Type</td>
+                        <td>
+                            <select
+                                style={{ width: "7vw" }}
+                                onChange={(e) => {
+                                    props.settings.pitchAttackType = e.target.value;
+                                }}
+                                value={props.settings.pitchAttackType}
+                            >
+                                <option value="high">High</option>
+                                <option value="low">Low</option>
+                                <option value="port">Portamento</option>
+                            </select>
+                        </td>
+                    </tr>
+                </EnvelopePanel>
+
                 <EnvelopePanel title="Filter" envelope={props.settings.filter}>
-                    Filter Q:
-                    <input
-                        style={{ width: "7vw" }}
-                        onChange={(e) => {
-                            props.settings.fQ = parseInt(e.target.value);
-                        }}
-                        value={props.settings.fQ}
-                    />
+                    <tr>
+                        <td>Filter Q</td>
+                        <td>
+                            <input
+                                style={{ width: "7vw" }}
+                                onChange={(e) => {
+                                    props.settings.fQ = parseInt(e.target.value);
+                                }}
+                                value={props.settings.fQ}
+                            />
+                        </td>
+                    </tr>
                 </EnvelopePanel>
                 <EnvelopePanel title="Volume" envelope={props.settings.volume} />
             </div>
 
-            <canvas id="scopeBox" width={window.innerWidth / 2} height={window.innerHeight}></canvas>
+            <Oscilloscope draw={props.oscilloscopeDraw} synth={props.synth} />
 
             <div
-                id="rightBox"
+                className="column"
                 style={{
                     backgroundColor: backgroundColor,
-                    height: `${window.innerHeight - (window.innerWidth / 100) * 2}`,
                 }}
             >
                 <h1>LFO:</h1>

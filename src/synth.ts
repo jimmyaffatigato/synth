@@ -1,18 +1,14 @@
 import { midiToFreq } from "./myLibrary";
 import SynthSettings from "./SynthSettings";
 
-const noteFlags = [];
-for (let k = 0; k < 127; k++) {
-    noteFlags.push(true);
-}
-
 export default class Synth {
     public au: AudioContext;
     public gain: GainNode;
     public scope: AnalyserNode;
     public settings: SynthSettings;
-    public notesOn;
-    public octave;
+    public notesOn: Voice[];
+    public octave: number;
+    private noteFlags: boolean[];
     constructor(au: AudioContext, settings: SynthSettings) {
         this.au = au;
         this.settings = settings;
@@ -23,19 +19,23 @@ export default class Synth {
         this.gain.connect(this.scope);
         this.scope.connect(au.destination);
         this.notesOn = [];
+        this.noteFlags = [];
+        for (let k = 0; k < 127; k++) {
+            this.noteFlags.push(true);
+        }
     }
     public voiceOn(note: number, velocity: number) {
         note += 12 * this.octave;
-        if (noteFlags[note] == true) {
-            const newVoice = new Voice(this, note, velocity);
-            this.notesOn.push(newVoice);
-            newVoice.go();
-            noteFlags[note] = false;
+        if (this.noteFlags[note] == true) {
+            const voice = new Voice(this, note, velocity);
+            this.notesOn.push(voice);
+            voice.go();
+            this.noteFlags[note] = false;
         }
     }
     public voiceOff(note: number) {
         note += 12 * this.octave;
-        noteFlags[note] = true;
+        this.noteFlags[note] = true;
         for (let notes = 0; notes < this.notesOn.length; notes++) {
             if (this.notesOn[notes].note == note) {
                 this.notesOn[notes].bye();
