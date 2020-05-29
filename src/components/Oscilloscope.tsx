@@ -3,7 +3,7 @@ import { FunctionComponent, PropsWithChildren, useRef, useEffect, useState } fro
 import Synth from "../Synth";
 
 interface OscilloscopeProps {
-    synth: Synth;
+    scope: AnalyserNode;
 }
 
 const Oscilloscope: FunctionComponent<OscilloscopeProps> = (props: PropsWithChildren<OscilloscopeProps>) => {
@@ -16,12 +16,12 @@ const Oscilloscope: FunctionComponent<OscilloscopeProps> = (props: PropsWithChil
         setHeight(Number(canvas.current.getBoundingClientRect().height));
         update(ctx);
     });
-    const draw = (ctx: CanvasRenderingContext2D, synth: Synth) => {
-        synth.scope.fftSize = 2048;
+    const draw = (ctx: CanvasRenderingContext2D, scope: AnalyserNode) => {
+        scope.fftSize = 2048;
         const bufferLength = 1024;
         const dataArray = new Uint8Array(bufferLength);
-        synth.scope.getByteTimeDomainData(dataArray);
-        synth.scope.getByteTimeDomainData(dataArray);
+        scope.getByteTimeDomainData(dataArray);
+        scope.getByteTimeDomainData(dataArray);
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.lineWidth = 10;
         ctx.strokeStyle = "white";
@@ -44,7 +44,7 @@ const Oscilloscope: FunctionComponent<OscilloscopeProps> = (props: PropsWithChil
         setTimeout(() => {
             update(ctx);
         }, 100);
-        draw(ctx, props.synth);
+        draw(ctx, props.scope);
     };
     return (
         <div className="oscilloscope">

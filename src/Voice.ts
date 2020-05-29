@@ -1,5 +1,6 @@
 import Synth from "./Synth";
 import { midiToFreq } from "./util";
+import Envelope from "./Envelope";
 
 export default class Voice {
     synth: Synth;
@@ -8,8 +9,8 @@ export default class Voice {
     freq: number;
     osc: OscillatorNode;
     oscGain: GainNode;
-    filEnv: BiquadFilterNode;
-    volEnv: GainNode;
+    filter: BiquadFilterNode;
+    volume: GainNode;
     panner: StereoPannerNode;
     lfo: OscillatorNode;
     lfoGain: GainNode;
@@ -20,20 +21,15 @@ export default class Voice {
         this.vel = vel / 127;
         this.freq = midiToFreq(note);
         this.osc = new OscillatorNode(synth.au);
+        this.osc.frequency.value = this.freq;
         this.oscGain = new GainNode(synth.au);
         this.osc.type = synth.settings.oscType;
         this.oscGain.gain.value = this.vel;
-        this.filEnv = new BiquadFilterNode(synth.au);
-        this.filEnv.type = "lowpass";
-        this.filEnv.Q.value = synth.settings.fQ;
-        this.volEnv = new GainNode(synth.au);
+        this.filter = new BiquadFilterNode(synth.au);
+        this.filter.type = "lowpass";
+        this.filter.Q.value = synth.settings.fQ;
+        this.volume = new GainNode(synth.au);
         this.panner = new StereoPannerNode(synth.au);
-        const bufferSize = 2 * synth.au.sampleRate,
-            noiseBuffer = synth.au.createBuffer(1, bufferSize, synth.au.sampleRate),
-            output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            output[i] = Math.random();
-        }
 
         //LFO 1
         this.lfo = new OscillatorNode(synth.au);
@@ -45,9 +41,9 @@ export default class Voice {
 
         //Connections
         this.osc.connect(this.oscGain);
-        this.oscGain.connect(this.filEnv);
-        this.filEnv.connect(this.volEnv);
-        this.volEnv.connect(this.panner);
+        this.oscGain.connect(this.filter);
+        this.filter.connect(this.volume);
+        this.volume.connect(this.panner);
         this.panner.connect(synth.gain);
 
         this.lfo.connect(this.lfoGain);
@@ -58,7 +54,7 @@ export default class Voice {
                 break;
             case "fil":
                 this.lfoGain.gain.value = synth.settings.filter.d[0] * synth.settings.lfoDepth + 100;
-                this.lfoGain.connect(this.filEnv.frequency);
+                this.lfoGain.connect(this.filter.frequency);
                 break;
             case "pan":
                 this.lfoGain.gain.value = synth.settings.lfoDepth;
@@ -76,51 +72,29 @@ export default class Voice {
         }
     }
     public go() {
-        this.osc.frequency.setTargetAtTime(this.freq, this.synth.au.currentTime, this.synth.settings.pitch.a[1]);
-        this.filEnv.frequency.setTargetAtTime(0, this.synth.au.currentTime, 0);
-        this.filEnv.frequency.setTargetAtTime(
-            this.synth.settings.filter.a[0],
-            this.synth.au.currentTime,
-            this.synth.settings.filter.a[1]
-        );
-        this.filEnv.frequency.setTargetAtTime(
-            this.synth.settings.filter.d[0],
-            this.synth.au.currentTime + this.synth.settings.filter.a[1],
-            this.synth.settings.filter.d[1]
-        );
-        this.volEnv.gain.setTargetAtTime(0, this.synth.au.currentTime, 0);
-        this.volEnv.gain.setTargetAtTime(
-            this.synth.settings.volume.a[0],
-            this.synth.au.currentTime,
-            this.synth.settings.volume.a[1]
-        );
-        this.volEnv.gain.setTargetAtTime(
-            this.synth.settings.volume.d[0],
-            this.synth.au.currentTime + this.synth.settings.volume.a[1],
-            this.synth.settings.volume.d[1]
-        );
+        const pitchEnv = this.synth.settings.pitch;
+        const filterEnv = this.synth.settings.filter;
+        const volumeEnv = this.synth.settings.volume;
+        this.startEnvelope(this.osc.frequency, pitchEnv, this.osc.frequency.value);
+        this.startEnvelope(this.filter.frequency, filterEnv);
+        this.startEnvelope(this.volume.gain, volumeEnv);
     }
     public bye() {
-        this.filEnv.frequency.setTargetAtTime(
-            this.synth.settings.filter.s[0],
-            this.synth.au.currentTime,
-            this.synth.settings.filter.s[1]
-        );
-        this.filEnv.frequency.setTargetAtTime(
-            this.synth.settings.filter.r[0],
-            this.synth.au.currentTime + this.synth.settings.filter.s[1],
-            this.synth.settings.filter.r[1]
-        );
-        this.volEnv.gain.setTargetAtTime(
-            this.synth.settings.volume.s[0],
-            this.synth.au.currentTime,
-            this.synth.settings.volume.s[1]
-        );
-        this.volEnv.gain.setTargetAtTime(
-            this.synth.settings.volume.r[0],
-            this.synth.au.currentTime + this.synth.settings.volume.s[1],
-            this.synth.settings.volume.r[1]
-        );
+        const pitchEnv = this.synth.settings.pitch;
+        const filterEnv = this.synth.settings.filter;
+        const volumeEnv = this.synth.settings.volume;
+        this.endEnvelope(this.osc.frequency, pitchEnv, this.osc.frequency.value);
+        this.endEnvelope(this.filter.frequency, filterEnv);
+        this.endEnvelope(this.volume.gain, volumeEnv);
+
         this.osc.stop(this.synth.au.currentTime + 4);
+    }
+    public startEnvelope(param: AudioParam, envelope: Envelope, base: number = 0): void {
+        param.setTargetAtTime(base + envelope.a[0], this.synth.au.currentTime, envelope.a[1]);
+        param.setTargetAtTime(base + envelope.d[0], this.synth.au.currentTime + envelope.a[1], envelope.d[1]);
+    }
+    public endEnvelope(param: AudioParam, envelope: Envelope, base: number = 0): void {
+        param.setTargetAtTime(base + envelope.s[0], this.synth.au.currentTime, envelope.s[1]);
+        param.setTargetAtTime(base + envelope.r[0], this.synth.au.currentTime + envelope.s[1], envelope.r[1]);
     }
 }
